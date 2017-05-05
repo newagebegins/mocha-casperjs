@@ -189,6 +189,30 @@ if (cliOptions.args.length > 1) {
   })
 }
 
+var startTime = new Date();
+startTime = startTime.getFullYear().toString() +
+  (startTime.getMonth() + 1).toString() +
+  startTime.getDate().toString() +
+  startTime.getHours().toString() +
+  startTime.getMinutes().toString() +
+  startTime.getSeconds().toString();
+
+afterEach(function() {
+  if (this.currentTest.state !== 'passed') {
+    var t = this.currentTest;
+    var p = [];
+    while (t) {
+      p.unshift(t.title);
+      t = t.parent;
+    }
+    p.unshift(startTime);
+    p.unshift('screenshots');
+    fs.makeTree(p.slice(0, p.length - 1).join('/'));
+    var fname = p.join('/') + '.png';
+    casper.capture(fname);
+  }
+});
+
 tests.map(function(test) {
   return fs.absolute(test).replace('.coffee', '').replace('.js', '')
 }).forEach(function(test) {
